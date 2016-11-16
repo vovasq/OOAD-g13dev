@@ -57,6 +57,7 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 	private TextField username;
 	private PasswordField password;
 	private Button loginButton;
+	private TextField smsCode;
 	
 	transient Logger log = Log4JUtils.getInstance().getLogger();
 	
@@ -126,6 +127,7 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 		setExpandRatio(rightVL, 4);
 	}
 	
+	// didnt understand where does it use 
 	@Override
 	public void enter(ViewChangeEvent event) {
 		
@@ -142,7 +144,7 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 		
 		try {
 			admin.oeLogin(new DtLogin(new PtString(username.getValue())), new DtPassword(new PtString(password.getValue())));
-			
+				
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -43,35 +43,25 @@ public class ActAuthenticated implements Serializable {
 		return this.aDtLogin;
 	}
 
-	public PtBoolean oeLogin(DtLogin aDtLogin, DtPassword aDtPassword) throws Exception {
-		
-		IcrashSystem sys = IcrashSystem.getInstance();
-		
+	public PtBoolean oeLogin(DtLogin aDtLogin, DtPassword aDtPassword) throws Exception {		
+		IcrashSystem sys = IcrashSystem.getInstance();		
 		//set up ActAuthenticated instance that performs the request
-		sys.setCurrentRequestingAuthenticatedActor(this);
-		
+		sys.setCurrentRequestingAuthenticatedActor(this);		
 		log.info("message ActAuthenticated.oeLogin sent to system");
 		PtBoolean res = sys.oeLogin(aDtLogin, aDtPassword);
-		
 		if(res.getValue() == true) 
 			log.info("operation oeLogin successfully executed by the system");
-		
 		return res;
 	}
 	
 	public PtBoolean oeLogout() throws Exception {
-
 		IcrashSystem sys = IcrashSystem.getInstance();
-		
 		//set up ActAuthenticated instance that performs the request
 		sys.setCurrentRequestingAuthenticatedActor(this);
-
 		log.info("message ActAuthenticated.oeLogout sent to system");
 		PtBoolean res = sys.oeLogout();
-
 		if(res.getValue() == true) 
 			log.info("operation oeLogout successfully executed by the system");
-		
 		return res;
 	}
 

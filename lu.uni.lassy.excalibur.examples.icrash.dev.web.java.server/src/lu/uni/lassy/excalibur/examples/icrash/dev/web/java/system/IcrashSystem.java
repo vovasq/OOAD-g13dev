@@ -281,7 +281,8 @@ public class IcrashSystem implements Serializable {
 	}
 	
 	// actAuthenticated Actor
-	public PtBoolean oeLogin(DtLogin aDtLogin, DtPassword aDtPassword) throws Exception {
+	public PtBoolean oeLogin(DtLogin aDtLogin, DtPassword aDtPassword // ,DtSmsCode aDtCode
+			) throws Exception {
 			
 		// PreP 1 The system is started 
 		if (!isSystemStartedCheck())
@@ -303,15 +304,23 @@ public class IcrashSystem implements Serializable {
 			
 			PtBoolean pwdCheck = ctAuthenticatedInstance.pwd.eq(aDtPassword);
 			if(pwdCheck.getValue()) {
+				PtBoolean smsCodeCheck = ctAuthenticatedInstance.currentSmsCode.isTheSame();
+				if(smsCodeCheck.getValue())
+				{
+					// PostP 1 - auth info is correct, so the actor will now be known as logged in
+					currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
+					ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
 					
-				// PostP 1 - auth info is correct, so the actor will now be known as logged in
-				currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
-				ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
-			
-				// PostF 1 - the actor gave correct data
-				PtString aMessage = new PtString("You are logged ! Welcome ...");
+					// PostF 1 - the actor gave correct data
+					PtString aMessage = new PtString("You are logged ! Welcome ...");
+					currentRequestingAuthenticatedActor.ieMessage(aMessage);
+					return new PtBoolean(true);
+
+				}
+				PtString aMessage = new PtString("You aren't logged ! Sms code isn't right");
 				currentRequestingAuthenticatedActor.ieMessage(aMessage);
-				return new PtBoolean(true);
+				return new PtBoolean(false);
+				
 			}
 		}	
 			
