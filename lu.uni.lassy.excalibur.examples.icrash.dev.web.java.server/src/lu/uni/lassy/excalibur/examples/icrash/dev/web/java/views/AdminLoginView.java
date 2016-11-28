@@ -57,8 +57,9 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 	private TextField username;
 	private PasswordField password;
 	private Button loginButton;
-	private TextField smsCode;
-	
+//	private TextField smsCode;
+	//private Label welcomeSmsText;
+	//private boolean vovasTest = false;
 	transient Logger log = Log4JUtils.getInstance().getLogger();
 	
 	public AdminLoginView() {
@@ -76,7 +77,7 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 		
 		// create the username input field
 		username = new TextField("Login:");
-		username.setWidth("120px");
+		username.setWidth("120px");	
 		username.setInputPrompt("Admin login");
 		username.setImmediate(true);
 
@@ -92,7 +93,9 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 		loginButton.setClickShortcut(KeyCode.ENTER);
 		loginButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		loginButton.setImmediate(true);
+				
 		
+
 		/*********************************************************************************************/
 		Table adminMessagesTable = new Table();
 		adminMessagesTable.setContainerDataSource(actAdmin.getMessagesDataSource());
@@ -129,11 +132,9 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 	
 	// didnt understand where does it use 
 	@Override
-	public void enter(ViewChangeEvent event) {
-		
+	public void enter(ViewChangeEvent event) {	
 		username.setValue("");
 		password.setValue(null);
-		
 		username.focus();
 	}
 
@@ -143,10 +144,16 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 		ActAdministrator admin = env.getActAdministrator(new DtLogin(new PtString(AdminActors.values[0].name())));
 		
 		try {
-			admin.oeLogin(new DtLogin(new PtString(username.getValue())), new DtPassword(new PtString(password.getValue())));
+			actAdmin.setActorUI(UI.getCurrent());
+			
+			log.info(username.getValue());
+			admin.oeLogin( new DtLogin(new PtString(username.getValue())), new DtPassword(new PtString(password.getValue()))).getValue();				
+				
+			//	admin.oeLoginBySms();
 				
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.info("popali blin");
 		}
 				
 		// refreshing this view forces redirection of the user

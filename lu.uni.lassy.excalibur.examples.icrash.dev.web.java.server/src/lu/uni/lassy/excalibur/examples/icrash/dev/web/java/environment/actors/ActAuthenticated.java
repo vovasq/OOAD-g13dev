@@ -22,7 +22,10 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.design.A
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPassword;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtBoolean;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtInteger;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtString;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtString;
+
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.Log4JUtils;
 
 public class ActAuthenticated implements Serializable {
@@ -49,8 +52,17 @@ public class ActAuthenticated implements Serializable {
 		sys.setCurrentRequestingAuthenticatedActor(this);		
 		log.info("message ActAuthenticated.oeLogin sent to system");
 		PtBoolean res = sys.oeLogin(aDtLogin, aDtPassword);
-		if(res.getValue() == true) 
-			log.info("operation oeLogin successfully executed by the system");
+		if(res.getValue() == true){ 
+			log.info("operation oeLogin successfully executed by the system waiting for sms");
+		}
+		return res;
+	}
+	public PtBoolean oeLoginBySms(DtString smsCode){
+		IcrashSystem sys = IcrashSystem.getInstance();		
+		//set up ActAuthenticated instance that performs the request
+		sys.setCurrentRequestingAuthenticatedActor(this);		
+		log.info("message ActAuthenticated.oeLoginBySms sent to system");
+		PtBoolean res = sys.oeLoginBySms(smsCode);
 		return res;
 	}
 	
@@ -60,7 +72,7 @@ public class ActAuthenticated implements Serializable {
 		sys.setCurrentRequestingAuthenticatedActor(this);
 		log.info("message ActAuthenticated.oeLogout sent to system");
 		PtBoolean res = sys.oeLogout();
-		if(res.getValue() == true) 
+		if(res.getValue() == true 	) 
 			log.info("operation oeLogout successfully executed by the system");
 		return res;
 	}

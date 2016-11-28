@@ -36,6 +36,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.AdminActors;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.Log4JUtils;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.views.AdminAuthView;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.views.AdminLoginView;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.views.AdminSmsLoginView;
 
 @Push
 @Theme("valo")
@@ -80,12 +81,16 @@ public class AdministratorLauncher extends UI {
 			@Override
 			public View getView(String viewName) {
 
-				if (!ctAdmin.vpIsLogged.getValue())
+				log.info("we are in getView adminlauncher");
+				if (!ctAdmin.vpIsLogged.getValue()) {
+					if(ctAdmin.isPassAndLoginRight.getValue()){
+						return new AdminSmsLoginView();}
 					return new AdminLoginView();
-
-				else if (ctAdmin.vpIsLogged.getValue()) 
+				}	
+				else if(ctAdmin.vpIsLogged.getValue()) {
+					log.info("new AdminAuthView");
 					return new AdminAuthView();
-
+				}
 			 // practically unreachable code
 				return null;
 			}

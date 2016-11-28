@@ -64,6 +64,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtTime;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtInteger;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtString;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.AdminActors;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.ComCompaniesInLux;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.ICrashUtils;
@@ -281,7 +282,7 @@ public class IcrashSystem implements Serializable {
 	}
 	
 	// actAuthenticated Actor
-	public PtBoolean oeLogin(DtLogin aDtLogin, DtPassword aDtPassword // ,DtSmsCode aDtCode
+	public PtBoolean oeLogin(DtLogin aDtLogin, DtPassword aDtPassword 
 			) throws Exception {
 			
 		// PreP 1 The system is started 
@@ -291,7 +292,7 @@ public class IcrashSystem implements Serializable {
 		// check whether the credentials corresponds to an existing user
 		// this is done by checking if there exists an instance with
 		// such credential in the ctAuthenticatedInstances data structure
-		// ctAuthenticatedInstance = cmpSystemCtAuthenticated.get(aDtLogin);
+		ctAuthenticatedInstance = cmpSystemCtAuthenticated.get(aDtLogin);
 		ctAuthenticatedInstance = getCtAuthenticated(currentRequestingAuthenticatedActor);	
 		
 		if (ctAuthenticatedInstance != null) {
@@ -304,23 +305,22 @@ public class IcrashSystem implements Serializable {
 			
 			PtBoolean pwdCheck = ctAuthenticatedInstance.pwd.eq(aDtPassword);
 			if(pwdCheck.getValue()) {
-				PtBoolean smsCodeCheck = ctAuthenticatedInstance.currentSmsCode.isTheSame();
-				if(smsCodeCheck.getValue())
-				{
-					// PostP 1 - auth info is correct, so the actor will now be known as logged in
-					currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
-					ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
-					
-					// PostF 1 - the actor gave correct data
-					PtString aMessage = new PtString("You are logged ! Welcome ...");
-					currentRequestingAuthenticatedActor.ieMessage(aMessage);
-					return new PtBoolean(true);
-
-				}
-				PtString aMessage = new PtString("You aren't logged ! Sms code isn't right");
-				currentRequestingAuthenticatedActor.ieMessage(aMessage);
-				return new PtBoolean(false);
+				// PostP 1 - auth info is correct, so the actor will now be known as logged in
+				// new PostP 1 - auth info is correct then we set to private field ctAuthentificated 
+				// an sms code and we have to check 
+				// that user should input 
+				currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
+				// comment the value that is an indicator to going to other window in adminloginview
+//				ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
 				
+				ctAuthenticatedInstance.isPassAndLoginRight = new PtBoolean(true);
+				
+				// PostF 1 - the actor gave correct data
+				// waiting for an sms code input
+				PtString aMessage = new PtString(" We'v just sent an sms with code to your phone! "
+						+ "Input it in textview...");
+				currentRequestingAuthenticatedActor.ieMessage(aMessage);
+				return new PtBoolean(true);		
 			}
 		}	
 			
@@ -334,12 +334,26 @@ public class IcrashSystem implements Serializable {
 		//notify to all administrators that exist in the environment
 		for (DtLogin adminKey : env.getAdministrators().keySet()) {
 			ActAdministrator admin = env.getActAdministrator(adminKey);
-			
 			log.debug("INSIDE oeLogin CHECK, actor's UI is "+admin.getActorUI());
-			
 			aMessage = new PtString("Intrusion tentative !");
 			admin.ieMessage(aMessage);
 		}
+		return new PtBoolean(false);
+	}
+	public PtBoolean oeLoginBySms(DtString smsCode){
+		ctAuthenticatedInstance = getCtAuthenticated(currentRequestingAuthenticatedActor);			
+		currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
+		//currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
+		log.info("system checks the smscode");
+		PtBoolean codeCheck = ctAuthenticatedInstance.code.eq(smsCode);
+		if(codeCheck.getValue()){
+			ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
+			PtString aMessage = new PtString("You succesfully logged in!");
+			currentRequestingAuthenticatedActor.ieMessage(aMessage);
+			return new PtBoolean(true);
+		}
+		PtString aMessage = new PtString("Code is wrong! Please check out it");
+		currentRequestingAuthenticatedActor.ieMessage(aMessage);
 		return new PtBoolean(false);
 	}
 		
