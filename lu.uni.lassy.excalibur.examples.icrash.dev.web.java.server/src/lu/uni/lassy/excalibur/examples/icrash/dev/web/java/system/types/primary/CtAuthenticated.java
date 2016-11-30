@@ -30,6 +30,7 @@ public abstract class CtAuthenticated implements Serializable {
 	// here we add a new field contains current sms code
 	
 	public PtBoolean init(DtLogin aLogin, DtPassword aPwd){
+			
 			login = aLogin;
 			pwd = aPwd;
 			vpIsLogged = new PtBoolean(false); 

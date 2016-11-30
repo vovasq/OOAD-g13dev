@@ -313,13 +313,19 @@ public class IcrashSystem implements Serializable {
 				// comment the value that is an indicator to going to other window in adminloginview
 //				ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
 				
+				// we generate a new code and set it to the smscode 
+				PtString newSmsCode = smsCodeGenerator();
+				ctAuthenticatedInstance.code.setDtString(newSmsCode);
+				// we set isPassAndLoginRight to true so we go from loginView to smsloginview   
 				ctAuthenticatedInstance.isPassAndLoginRight = new PtBoolean(true);
+				
 				
 				// PostF 1 - the actor gave correct data
 				// waiting for an sms code input
 				PtString aMessage = new PtString(" We'v just sent an sms with code to your phone! "
 						+ "Input it in textview...");
 				currentRequestingAuthenticatedActor.ieMessage(aMessage);
+				log.info("our code is " + newSmsCode.getValue() );
 				return new PtBoolean(true);		
 			}
 		}	
@@ -345,6 +351,8 @@ public class IcrashSystem implements Serializable {
 		currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
 		//currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
 		log.info("system checks the smscode");
+		// we check is code the same as we get from textfield and if its true then return 
+		// true and allow user to acceses  to the account
 		PtBoolean codeCheck = ctAuthenticatedInstance.code.eq(smsCode);
 		if(codeCheck.getValue()){
 			ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
@@ -357,12 +365,14 @@ public class IcrashSystem implements Serializable {
 		return new PtBoolean(false);
 	}
 		
+	public PtString smsCodeGenerator(){
+		return new PtString("vovas");
+	}
 	public PtBoolean oeLogout() throws Exception {
 
 		// PreP 1 The system is started 
 		if (!isSystemStartedCheck())
 			return new PtBoolean(false);
-		
 		// PreP 2 The actor is currently logged in
 		if (!isActorLoggedInCheck()) {
 			log.debug("Inside oeLogout: the actor is not logged in, so epic fail here");
@@ -374,17 +384,15 @@ public class IcrashSystem implements Serializable {
 		
 		if (ctAuth != null) {
 			DtLogin key = ctAuth.login;
-			CtAuthenticated user = cmpSystemCtAuthenticated.get(key);
-			
+			CtAuthenticated user = cmpSystemCtAuthenticated.get(key);			
 			// PostP 1
 			user.vpIsLogged = new PtBoolean(false);
-			
+			user.isPassAndLoginRight = new PtBoolean(false);
 			// PostF 1
 			PtString aMessage = new PtString("You are logged out ! Good Bye ...");
 			currentRequestingAuthenticatedActor.ieMessage(aMessage);
 		}
 		currentRequestingAuthenticatedActor = new ActAuthenticated(new DtLogin(new PtString("")));
-		
 		return new PtBoolean(true);
 	}
 	
@@ -424,12 +432,11 @@ public class IcrashSystem implements Serializable {
 		if (!systemIsStarted) {
 			log.debug("Error, the system is not started!");
 			return false;
-		
 		} else if (systemIsStarted) {
 			return true;
 		
 		} else {
-			throw new Exception("Houston, we have a problem - CtState.vpIsLogged is null");
+			throw new Exception("Houston, we have some problems - CtState.vpIsLogged is null");
 		} 
 	}
 	

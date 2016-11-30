@@ -28,6 +28,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtString
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.Log4JUtils;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.views.CoordMobileAuthView;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.views.CoordMobileLoginView;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.views.CoordSmsLoginView;
 
 @Push
 @Theme("icrash")
@@ -56,6 +57,9 @@ public class CoordinatorLauncher extends UI {
 				CtCoordinator thisCtCoord = (CtCoordinator) sys.getCtCoordinator(new DtCoordinatorID(new PtString(viewName)));
 				
 				if (!thisCtCoord.vpIsLogged.getValue()) {
+					if(thisCtCoord.isPassAndLoginRight.getValue()){
+						return new CoordSmsLoginView(viewName);
+					}
 					log.debug("coordinatorsViewProvider: actor is logged out, so let's return CoordMobileLoginView");
 					return new CoordMobileLoginView(viewName);
 				}

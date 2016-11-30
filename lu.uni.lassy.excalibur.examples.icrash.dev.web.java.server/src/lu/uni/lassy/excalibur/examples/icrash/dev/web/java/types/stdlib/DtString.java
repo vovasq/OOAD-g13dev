@@ -51,7 +51,15 @@ public class DtString implements Serializable {
 		public DtString(PtString s){
 			value = s;
 		}
-
+		
+		// we implement this method to set secret combination from generator 
+		public PtBoolean setDtString(PtString s){
+		
+			if(s != null) value = s;
+			else return new PtBoolean(false);
+			return new PtBoolean(true);
+		}
+		
 		// and what if DtString were null?
 		public PtBoolean eq(DtString s){
 			
