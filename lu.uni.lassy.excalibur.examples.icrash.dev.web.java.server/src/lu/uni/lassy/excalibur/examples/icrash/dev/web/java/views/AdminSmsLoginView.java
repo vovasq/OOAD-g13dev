@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2015 University of Luxembourg.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     Anton Nikonienkov - iCrash HTML5 API and implementation
- ******************************************************************************/
 package lu.uni.lassy.excalibur.examples.icrash.dev.web.java.views;
 
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -33,6 +23,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPassword;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtString;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.AdminActors;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.Log4JUtils;
 
@@ -42,8 +33,9 @@ import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
-public class AdminLoginView extends HorizontalLayout implements View, Button.ClickListener, Serializable {
 
+public class AdminSmsLoginView extends HorizontalLayout 
+implements View, Button.ClickListener, Serializable {
 	private static final long serialVersionUID = -3317915013312630958L;
 
 	IcrashSystem sys = IcrashSystem.getInstance();
@@ -53,64 +45,50 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 	CtAdministrator ctAdmin =  (CtAdministrator) sys.getCtAuthenticated(actAdmin);
 	
 	private Label welcomeText;
-	private Label hintText;
-	private TextField username;
-	private PasswordField password;
+	private PasswordField smsCode;
 	private Button loginButton;
-//	private TextField smsCode;
-	//private Label welcomeSmsText;
-	//private boolean vovasTest = false;
 	transient Logger log = Log4JUtils.getInstance().getLogger();
-	
-	public AdminLoginView() {
-		
+	public AdminSmsLoginView(){
 		actAdmin.setActorUI(UI.getCurrent());
 		env.setActAdministrator(actAdmin.getName(), actAdmin);
 		IcrashSystem.assCtAuthenticatedActAuthenticated.replace(ctAdmin, actAdmin);
 		
 		log.debug("CHECK: ADMIN UI is "+actAdmin.getActorUI());
 		
-		welcomeText = new Label("Please login to access iCrash Administrator Console");
-		hintText = new Label("(icrashadmin/7WXC1359)");
-		welcomeText.setSizeUndefined();
-		hintText.setSizeUndefined();
+		welcomeText = new Label("Please input code from sms to enter iCrash Administrator Console");
 		
 		// create the username input field
-		username = new TextField("Login:");
-		username.setWidth("120px");	
-		username.setInputPrompt("Admin login");
-		username.setImmediate(true);
-
+		
 		// create the password input field
-		password = new PasswordField("Password:");
-		password.setWidth("120px");
-		password.setValue("");
-		password.setNullRepresentation("");
-		password.setImmediate(true);
+		smsCode = new PasswordField("Sms code:");
+		smsCode.setWidth("120px");
+		smsCode.setValue("");
+		smsCode.setNullRepresentation("");
+		smsCode.setImmediate(true);
 					
 		// create the login button
-		loginButton = new Button("Login", this);
+		loginButton = new Button("Enter", this);
 		loginButton.setClickShortcut(KeyCode.ENTER);
 		loginButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		loginButton.setImmediate(true);
 				
 		
-
+		
 		/*********************************************************************************************/
 		Table adminMessagesTable = new Table();
 		adminMessagesTable.setContainerDataSource(actAdmin.getMessagesDataSource());
 		adminMessagesTable.setCaption("Administrator messages");
-	//	adminMessagesTable.setVisibleColumns("inputEvent", "message");
+		//	adminMessagesTable.setVisibleColumns("inputEvent", "message");
 		/*********************************************************************************************/
 		
-		FormLayout FL = new FormLayout(username, password, loginButton);
+		FormLayout FL = new FormLayout(smsCode, loginButton);
 		
 		VerticalLayout welcomeLayout = new VerticalLayout(welcomeText, /*hintText,*/ FL);
 		VerticalLayout leftVL = new VerticalLayout(welcomeLayout); 
 		VerticalLayout rightVL = new VerticalLayout(adminMessagesTable);
-		
+			
 		welcomeLayout.setComponentAlignment(welcomeText, Alignment.MIDDLE_CENTER);
-	 // welcomeLayout.setComponentAlignment(hintText, Alignment.MIDDLE_CENTER);
+		 // welcomeLayout.setComponentAlignment(hintText, Alignment.MIDDLE_CENTER);
 		welcomeLayout.setComponentAlignment(FL, Alignment.MIDDLE_CENTER);
 		
 		setSizeFull();
@@ -133,23 +111,18 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 	// didnt understand where does it use 
 	@Override
 	public void enter(ViewChangeEvent event) {	
-		username.setValue("");
-		password.setValue(null);
-		username.focus();
+//		username.setValue("");
+		smsCode.setValue(null);
+//		username.focus();
 	}
-
+	
 	@Override
-	public void buttonClick(ClickEvent event) {
-		
+	public void buttonClick(ClickEvent event) {	
 		ActAdministrator admin = env.getActAdministrator(new DtLogin(new PtString(AdminActors.values[0].name())));
-		
 		try {
 			actAdmin.setActorUI(UI.getCurrent());
 			
-			log.info(username.getValue());
-			admin.oeLogin( new DtLogin(new PtString(username.getValue())), new DtPassword(new PtString(password.getValue()))).getValue();				
-			
-			//	admin.oeLoginBySms();
+				admin.oeLoginBySms(new DtString( new PtString(smsCode.getValue())));
 				
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -160,4 +133,6 @@ public class AdminLoginView extends HorizontalLayout implements View, Button.Cli
 		// to the view, where he should go now, be it AdminLoginView or AdminAuthView
 		Page.getCurrent().reload();
 	}
+
+	
 }

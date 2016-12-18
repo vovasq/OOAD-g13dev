@@ -51,7 +51,15 @@ public class DtString implements Serializable {
 		public DtString(PtString s){
 			value = s;
 		}
-
+		
+		// we implement this method to set secret combination from generator 
+		public PtBoolean setDtString(PtString s){
+		
+			if(s != null) value = s;
+			else return new PtBoolean(false);
+			return new PtBoolean(true);
+		}
+		
 		// and what if DtString were null?
 		public PtBoolean eq(DtString s){
 			
@@ -59,7 +67,7 @@ public class DtString implements Serializable {
 		 // if I don't have this right, then I leave it here as a temporary workaround for spec bug
 		 // I'll remove it later when this issue will be fully resolved	
 					
-			log.debug("Inside DtString.eq: s.value.getValue()"+s.value.getValue());
+			//log.debug("Inside DtString.eq: s.value.getValue()"+s.value.getValue());
 			if (s.value.getValue() == null) {
 				boolean res = "".equals(this.value.getValue());
 				if(res)

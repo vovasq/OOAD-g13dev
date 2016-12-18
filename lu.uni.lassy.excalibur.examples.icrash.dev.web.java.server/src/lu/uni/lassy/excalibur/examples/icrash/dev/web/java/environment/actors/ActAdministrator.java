@@ -19,6 +19,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPassword;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.Log4JUtils;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPhoneNumber;
 
 public class ActAdministrator extends ActAuthenticated {
 
@@ -30,7 +31,7 @@ public class ActAdministrator extends ActAuthenticated {
 	
 	public PtBoolean oeAddCoordinator(
 			DtCoordinatorID aDtCoordinatorID, DtLogin aDtLogin,
-			DtPassword aDtPassword) throws Exception {
+			DtPassword aDtPassword, DtPhoneNumber aDtPhoneNumber) throws Exception {
 
 		IcrashSystem sys = IcrashSystem.getInstance();
 		
@@ -38,7 +39,7 @@ public class ActAdministrator extends ActAuthenticated {
 		sys.setCurrentRequestingAuthenticatedActor(this);
 
 		log.info("message ActAdministrator.oeAddCoordinator sent to system");
-		PtBoolean res = sys.oeAddCoordinator(aDtCoordinatorID, aDtLogin, aDtPassword);
+		PtBoolean res = sys.oeAddCoordinator(aDtCoordinatorID, aDtLogin, aDtPassword, aDtPhoneNumber);
 
 		if (res.getValue() == true)
 			log.info("operation oeAddCoordinator successfully executed by the system");

@@ -91,6 +91,7 @@ CREATE TABLE `coordinators` (
  `id` varchar(80) NOT NULL,
   `login` varchar(80) DEFAULT NULL,
   `pwd` varchar(80) DEFAULT NULL,
+  `phone` varchar(80) DEFAULT NULL,
  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -192,7 +193,8 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 
-/*grant all on `database`.* to 'user'@'localhost' identified by 'password';*/
+grant all on `database`.* to 'user'@'localhost' identified by 'password';
+
 grant all on `icrash`.* to 'il2_icrash'@'%' identified by 'il2_icrash';
 grant all on `icrash`.* to 'il2_icrash'@'localhost' identified by 'il2_icrash';
 

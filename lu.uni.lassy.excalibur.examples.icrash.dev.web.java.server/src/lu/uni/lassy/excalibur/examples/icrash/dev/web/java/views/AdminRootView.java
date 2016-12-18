@@ -25,5 +25,6 @@ public class AdminRootView extends CssLayout implements View, Serializable {
 	
 	@Override
 	public void enter(ViewChangeEvent event) {
+	
 	}
 }

@@ -64,6 +64,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtTime;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtInteger;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtString;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.AdminActors;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.ComCompaniesInLux;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.ICrashUtils;
@@ -191,7 +192,7 @@ public class IcrashSystem implements Serializable {
 		*/
 
 		IcrashEnvironment env = IcrashEnvironment.getInstance();
-		
+//		ActComCompany saveLastComCompany;
 		for (int i = 0; i < aQtyComCompanies.getValue(); i++) {
 			String aActComCompanyName = ComCompaniesInLux.values[i].name();
 			DbComCompanies.insertComCompany(i + "", aActComCompanyName);
@@ -199,8 +200,12 @@ public class IcrashSystem implements Serializable {
 					aActComCompanyName);
 			env.setComCompany(aActComCompanyName, aActComCompany);
 			IcrashSystem.cmpSystemActComCompany.put(aActComCompanyName, aActComCompany);
+			// to overcome null pointer exception while we are sending an sms to coordinator
+			// before any alert we save some comcompany 
+			currentConnectedComCompany= aActComCompany;
 		} 
-		
+//		if(saveLastComCompany != null){
+//			currentConnectedComCompany = IcrashSystem.cmpSystemActComCompany.get(saveLastComCompany);}
 		/*	ENV
 		PostF 4 the environment for administrator actors, in the post state, is made of one instance.
 		*/
@@ -222,7 +227,8 @@ public class IcrashSystem implements Serializable {
 		CtAdministrator ctAdmin = new CtAdministrator();
 		DtLogin aLogin = new DtLogin(new PtString(adminName));
 		DtPassword aPwd = new DtPassword(new PtString("7WXC1359"));
-		ctAdmin.init(aLogin, aPwd);
+		DtPhoneNumber aNumber = new DtPhoneNumber(new PtString("+1237878"));
+		ctAdmin.init(aLogin, aPwd, aNumber);
 		
 		/*
 		PostF 7 the association between ctAdministrator and actAdministrator is made of 
@@ -281,8 +287,11 @@ public class IcrashSystem implements Serializable {
 	}
 	
 	// actAuthenticated Actor
-	public PtBoolean oeLogin(DtLogin aDtLogin, DtPassword aDtPassword) throws Exception {
-			
+//	public PtBoolean oeLogin(DtLogin aDtLogin, DtPassword aDtPassword 
+//			) throws Exception {
+		public PtBoolean oeLogin(DtLogin aDtLogin, DtPassword aDtPassword 
+				) throws Exception {
+				
 		// PreP 1 The system is started 
 		if (!isSystemStartedCheck())
 			return new PtBoolean(false);
@@ -290,7 +299,7 @@ public class IcrashSystem implements Serializable {
 		// check whether the credentials corresponds to an existing user
 		// this is done by checking if there exists an instance with
 		// such credential in the ctAuthenticatedInstances data structure
-		// ctAuthenticatedInstance = cmpSystemCtAuthenticated.get(aDtLogin);
+		ctAuthenticatedInstance = cmpSystemCtAuthenticated.get(aDtLogin);
 		ctAuthenticatedInstance = getCtAuthenticated(currentRequestingAuthenticatedActor);	
 		
 		if (ctAuthenticatedInstance != null) {
@@ -303,16 +312,37 @@ public class IcrashSystem implements Serializable {
 			
 			PtBoolean pwdCheck = ctAuthenticatedInstance.pwd.eq(aDtPassword);
 			if(pwdCheck.getValue()) {
-					
 				// PostP 1 - auth info is correct, so the actor will now be known as logged in
+				// new PostP 1 - auth info is correct then we set to private field ctAuthentificated 
+				// an sms code and we have to check 
+				// that user should input 
 				currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
-				ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
-			
+				// comment the value that is an indicator to going to other window in adminloginview
+//				ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
+				log.debug("ne currentRequestingautenticated");
+				// we generate a new code and set it to the smscode 
+				PtString newSmsCode = smsCodeGenerator();
+				ctAuthenticatedInstance.code.setDtString(newSmsCode);
+				// we set isPassAndLoginRight to true so we go from loginView to smsloginview   
+				ctAuthenticatedInstance.isPassAndLoginRight = new PtBoolean(true);
+				
 				// PostF 1 - the actor gave correct data
-				PtString aMessage = new PtString("You are logged ! Welcome ...");
-				currentRequestingAuthenticatedActor.ieMessage(aMessage);
-				return new PtBoolean(true);
-			}
+				// waiting for an sms code input
+				try {
+					PtString aMessage = new PtString(" We'v just sent an sms with code to your phone! "
+							+ "Input it in textview...");
+					currentRequestingAuthenticatedActor.ieMessage(aMessage);
+					log.info("our code is " + newSmsCode.getValue() );
+				
+					currentConnectedComCompany.ieSmsSend(ctAuthenticatedInstance.phoneNumber, new DtSMS(new PtString(newSmsCode.getValue())));
+					return new PtBoolean(true);		
+			
+				}catch (Exception e) {
+					e.printStackTrace();
+					log.info("popali blin");
+				}
+				
+				}
 		}	
 			
 		// PostF 1 - the actor gave incorrect data
@@ -325,21 +355,41 @@ public class IcrashSystem implements Serializable {
 		//notify to all administrators that exist in the environment
 		for (DtLogin adminKey : env.getAdministrators().keySet()) {
 			ActAdministrator admin = env.getActAdministrator(adminKey);
-			
 			log.debug("INSIDE oeLogin CHECK, actor's UI is "+admin.getActorUI());
-			
 			aMessage = new PtString("Intrusion tentative !");
 			admin.ieMessage(aMessage);
 		}
 		return new PtBoolean(false);
 	}
+	public PtBoolean oeLoginBySms(DtString smsCode){
+		ctAuthenticatedInstance = getCtAuthenticated(currentRequestingAuthenticatedActor);			
+		currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
+		//currentRequestingAuthenticatedActor = assCtAuthenticatedActAuthenticated.get(ctAuthenticatedInstance);
+		log.info("system checks the smscode");
+		// we check is code the same as we get from textfield and if its true then return 
+		// true and allow user to acceses  to the account
+		PtBoolean codeCheck = ctAuthenticatedInstance.code.eq(smsCode);
+		if(codeCheck.getValue()){
+			// postP 1 codeCheck is correct than
+			ctAuthenticatedInstance.vpIsLogged = new PtBoolean(true);
+			// postF 1 user is logged in  
+			PtString aMessage = new PtString("You succesfully logged in!");
+			currentRequestingAuthenticatedActor.ieMessage(aMessage);
+			return new PtBoolean(true);
+		}
+		PtString aMessage = new PtString("Code is wrong! Please check out it");
+		currentRequestingAuthenticatedActor.ieMessage(aMessage);
+		return new PtBoolean(false);
+	}
 		
+	public PtString smsCodeGenerator(){
+		return new PtString("vovas");
+	}
 	public PtBoolean oeLogout() throws Exception {
 
 		// PreP 1 The system is started 
 		if (!isSystemStartedCheck())
 			return new PtBoolean(false);
-		
 		// PreP 2 The actor is currently logged in
 		if (!isActorLoggedInCheck()) {
 			log.debug("Inside oeLogout: the actor is not logged in, so epic fail here");
@@ -351,17 +401,15 @@ public class IcrashSystem implements Serializable {
 		
 		if (ctAuth != null) {
 			DtLogin key = ctAuth.login;
-			CtAuthenticated user = cmpSystemCtAuthenticated.get(key);
-			
+			CtAuthenticated user = cmpSystemCtAuthenticated.get(key);			
 			// PostP 1
 			user.vpIsLogged = new PtBoolean(false);
-			
+			user.isPassAndLoginRight = new PtBoolean(false);
 			// PostF 1
 			PtString aMessage = new PtString("You are logged out ! Good Bye ...");
 			currentRequestingAuthenticatedActor.ieMessage(aMessage);
 		}
 		currentRequestingAuthenticatedActor = new ActAuthenticated(new DtLogin(new PtString("")));
-		
 		return new PtBoolean(true);
 	}
 	
@@ -401,12 +449,11 @@ public class IcrashSystem implements Serializable {
 		if (!systemIsStarted) {
 			log.debug("Error, the system is not started!");
 			return false;
-		
 		} else if (systemIsStarted) {
 			return true;
 		
 		} else {
-			throw new Exception("Houston, we have a problem - CtState.vpIsLogged is null");
+			throw new Exception("Houston, we have some problems - CtState.vpIsLogged is null");
 		} 
 	}
 	
@@ -511,7 +558,9 @@ public class IcrashSystem implements Serializable {
 		return null;
 	}
 
-	public PtBoolean oeAddCoordinator(DtCoordinatorID aDtCoordinatorID, DtLogin aDtLogin, DtPassword aDtPassword) throws Exception {
+//	public PtBoolean oeAddCoordinator(DtCoordinatorID aDtCoordinatorID, DtLogin aDtLogin, DtPassword aDtPassword) throws Exception {
+	public PtBoolean oeAddCoordinator(DtCoordinatorID aDtCoordinatorID, DtLogin aDtLogin, 
+			DtPassword aDtPassword, DtPhoneNumber aDtPhoneNumber) throws Exception {
 
 		// PreP 1
 		if (!isSystemStartedCheck()) {
@@ -531,7 +580,7 @@ public class IcrashSystem implements Serializable {
 
 		// PostF 2
 		CtCoordinator ctCoordinator = new CtCoordinator();
-		ctCoordinator.init(aDtCoordinatorID, aDtLogin, aDtPassword);
+		ctCoordinator.init(aDtCoordinatorID, aDtLogin, aDtPassword, aDtPhoneNumber);
 
 		// DEBUG
 		DbCoordinators.insertCoordinator(ctCoordinator);
@@ -542,7 +591,7 @@ public class IcrashSystem implements Serializable {
 		// Update composition relationships
 		cmpSystemCtAuthenticated.put(aDtLogin, ctCoordinator);
 		assCtCoordinatorActCoordinator.put(ctCoordinator, actCoordinator);
-
+		log.info("number of coordinator is" + aDtPhoneNumber.toString() );
 		// PostF 5
 		ActAdministrator actAdmin = env.getActAdministrator(new DtLogin(new PtString(AdminActors.values[0].name())));
 		actAdmin.ieCoordinatorAdded();

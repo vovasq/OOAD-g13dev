@@ -30,6 +30,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtDate;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtTime;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.Log4JUtils;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtString;
 
 public class ActComCompany implements Serializable {
 	private static final long serialVersionUID = 300328391242489155L;
@@ -97,7 +98,7 @@ public class ActComCompany implements Serializable {
 		log.info("message ActComCompany.ieSmsSend received from system");
 		log.info("Phone number: " + aDtPhoneNumber.value.getValue());
 		log.info("SMS: " + aDtSMS.value.getValue());
-
+		
 		getActorUI().access(() -> 
 			getMessagesDataSource().addBean(new ActorMessageBean("ieSmsSend", aDtSMS.value.getValue()))
 		);	

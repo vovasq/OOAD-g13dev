@@ -1,13 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2015 University of Luxembourg.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     Anton Nikonienkov - iCrash HTML5 API and implementation
- ******************************************************************************/
 package lu.uni.lassy.excalibur.examples.icrash.dev.web.java.views;
 
 import java.io.Serializable;
@@ -36,24 +26,23 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtCoordinatorID;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPassword;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.Log4JUtils;
 
-public class CoordMobileLoginView extends NavigationView implements View, Serializable {
+public class CoordSmsLoginView extends NavigationView implements View, Serializable {
 	private static final long serialVersionUID = 1866773510048507541L;
 	transient Logger log = Log4JUtils.getInstance().getLogger();
 	
 	IcrashSystem sys = IcrashSystem.getInstance();
 	IcrashEnvironment env = IcrashEnvironment.getInstance();
+
+	PasswordField smsCode = new PasswordField("Sms Code");
+	Button loginBtn = new Button("Enter");
 	
-	TextField login = new TextField("Login");
-	PasswordField pwd = new PasswordField("Password");
-	Button loginBtn = new Button("Login");
-//	TextField phone = new TextField("Login");
-	
-	
-	public CoordMobileLoginView(String CoordID) {
+	public CoordSmsLoginView(String CoordID) {
+		
 		CtCoordinator ctCoordinator = (CtCoordinator) sys.getCtCoordinator(new DtCoordinatorID(new PtString(CoordID)));
 		ActCoordinator actCoordinator = env.getActCoordinator(ctCoordinator.login);
 		
@@ -82,13 +71,12 @@ public class CoordMobileLoginView extends NavigationView implements View, Serial
 		
 		loginExtLayout.setComponentAlignment(loginIntLayout, Alignment.MIDDLE_CENTER);
 		
-		login.setInputPrompt("Coord login");
-		pwd.setValue("");
-		pwd.setNullRepresentation("");
+		smsCode.setValue("");
+		smsCode.setNullRepresentation("");
 		
 		loginBtn.setClickShortcut(KeyCode.ENTER);
 		
-		loginIntLayout.addComponents(login, pwd, loginBtn);
+		loginIntLayout.addComponents(smsCode, loginBtn);
 		
 		///////////////////////////////////////////////////////////////////////////////////
 		
@@ -107,18 +95,14 @@ public class CoordMobileLoginView extends NavigationView implements View, Serial
 		///////////////////////////////////////////////////////////////////////////////////
 		
 		loginBtn.addClickListener(event -> {
-			PtBoolean res;
 			try {
-				res = actCoordinator.oeLogin(new DtLogin(new PtString(login.getValue())), new DtPassword(new PtString(pwd.getValue())));
-				log.info("oeLogin returned "+res.getValue());
+				log.info("we are already in coordsmsLoginView");
+				actCoordinator.oeLoginBySms(new DtString( new PtString(smsCode.getValue())));
 				
-				if (res.getValue()) {
-					log.debug("After actCoordinator.oeLogin: JUST LOGGED IN, so Coord's vpIsLogged = "+ctCoordinator.vpIsLogged.getValue());
-				}
 					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 				
 			// refreshing this view forces redirection of the user
 			// to the view, where he should go now, be it CoordLoginView or CoordAuthView
@@ -134,9 +118,8 @@ public class CoordMobileLoginView extends NavigationView implements View, Serial
 	
 	@Override
 	public void enter(ViewChangeEvent event) {
-		login.setValue("");
-		pwd.setValue(null);
 		
-		login.focus();
+		smsCode.setValue(null);
+		
 	}
 }

@@ -12,7 +12,12 @@ package lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary
 
 import java.io.Serializable;
 
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtInteger;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtBoolean;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtInteger;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtString;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPhoneNumber;;
 
 public abstract class CtAuthenticated implements Serializable {
 
@@ -21,11 +26,21 @@ public abstract class CtAuthenticated implements Serializable {
 	public DtLogin login;
 	public DtPassword pwd;
 	public PtBoolean vpIsLogged;
-	
-	public PtBoolean init(DtLogin aLogin, DtPassword aPwd){
+	public PtBoolean isPassAndLoginRight;
+	public DtString code;
+	public DtSmsCode smsCode;
+	public DtPhoneNumber phoneNumber;
+	// here we add a new field contains current sms code
+//	public PtBoolean init(DtLogin aLogin, DtPassword aPwd){
+	public PtBoolean init(DtLogin aLogin, DtPassword aPwd, DtPhoneNumber aNumber){
 			login = aLogin;
 			pwd = aPwd;
 			vpIsLogged = new PtBoolean(false); 
-			return new PtBoolean(true); 
+			isPassAndLoginRight = new PtBoolean(false);
+			code = new DtString(new PtString("savov 123"));// it is generated code
+			phoneNumber = aNumber;
+			smsCode = new DtSmsCode(new PtString("soidokcndsok"));
+			return new PtBoolean(true); 			
+			
 	}
 }
