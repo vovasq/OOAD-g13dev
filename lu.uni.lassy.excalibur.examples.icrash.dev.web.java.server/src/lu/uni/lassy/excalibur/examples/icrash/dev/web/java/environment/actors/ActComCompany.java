@@ -25,6 +25,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPhoneNumber;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.EtHumanKind;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.secondary.DtSMS;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.secondary.DtSMSHumanNotify;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtDate;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtTime;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtBoolean;
@@ -75,6 +76,19 @@ public class ActComCompany implements Serializable {
 		if (res.getValue() == true) 
 			log.info("operation oeAlert successfully executed by the system");
 
+		return new PtBoolean(true);
+	}
+	
+	public PtBoolean ieSmsHumanNotifySend (DtPhoneNumber aDtPhoneNumber, DtSMSHumanNotify aDtSMSHumanNotify) {
+		
+		log.info("message ActComCompany.ieSmsHumanNotifySend received from system");
+		log.info("Phone number: " + aDtPhoneNumber.value.getValue());
+		log.info("SMS: " + aDtSMSHumanNotify.value.getValue());
+
+		getActorUI().access(() -> 
+			getMessagesDataSource().addBean(new ActorMessageBean("ieSmsHumanNotifySend", aDtSMSHumanNotify.value.getValue()))
+		);	
+					
 		return new PtBoolean(true);
 	}
 

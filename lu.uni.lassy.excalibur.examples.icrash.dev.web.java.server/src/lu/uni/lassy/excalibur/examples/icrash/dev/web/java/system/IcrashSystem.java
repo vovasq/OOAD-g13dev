@@ -217,7 +217,7 @@ public class IcrashSystem implements Serializable {
 		
 		/*
 		PostF 6 the set of ctAdministrator instances at post is made of one instance initialized with 
-		’icrashadmin’ (resp. ’7WXC1359’) for login (resp. password) values.
+		ï¿½icrashadminï¿½ (resp. ï¿½7WXC1359ï¿½) for login (resp. password) values.
 		*/
 		CtAdministrator ctAdmin = new CtAdministrator();
 		DtLogin aLogin = new DtLogin(new PtString(adminName));
@@ -695,7 +695,7 @@ public class IcrashSystem implements Serializable {
 			}
 	
 			// PostF 6
-			DtSMS sms = new DtSMS(new PtString(	"Your alert has been registered. We will handle it and keep you informed"));
+			DtSMS sms = new DtSMS(new PtString("Your alert has been registered. Time of creation Crisis " + aInstant.toString()));
 			currentConnectedComCompany.ieSmsSend(aDtPhoneNumber, sms);
 
 			// bind human with alert
@@ -871,6 +871,19 @@ public class IcrashSystem implements Serializable {
 				PtString aMessage = new PtString("The crisis status has been updated !");
 				theActCoordinator.ieMessage(aMessage);
 	
+				// PostF 2
+				for (CtAlert theAlert : getAlertsByCrisis(theCrisis))
+				{
+					Enumeration<CtAlert> enumKey = assCtAlertCtHuman.keys();
+					while(enumKey.hasMoreElements()){
+						CtAlert aCtAlert = enumKey.nextElement();
+						if (aCtAlert.equals(theAlert)){
+							CtHuman theHuman = assCtAlertCtHuman.get(aCtAlert);
+							if (!theHuman.isAcknowledged(aEtCrisisStatus).getValue())
+								log.error("Unable to message a communication company about the crisis update");
+						}
+					}
+				}
 				return new PtBoolean(true);
 			}
 		}
@@ -940,7 +953,7 @@ public class IcrashSystem implements Serializable {
 						CtAlert aCtAlert = enumKey.nextElement();
 						if (aCtAlert.equals(theAlert)){
 							CtHuman theHuman = assCtAlertCtHuman.get(aCtAlert);
-							if (!theHuman.isAcknowledged().getValue())
+							if (!theHuman.isAcknowledged(EtCrisisStatus.handled).getValue())
 								log.error("Unable to message a communication company about the crisis update");
 						}
 					}
@@ -1102,7 +1115,7 @@ public class IcrashSystem implements Serializable {
 
 				// PostF 2
 				assCtCrisisCtCoordinator.remove(theCrisis);
-			
+				
 				// PostF 3
 				Collection<CtAlert> keys = assCtAlertCtCrisis.keySet();
 				CtAlert[] alertkeys = keys.toArray(new CtAlert[0]);
@@ -1112,17 +1125,24 @@ public class IcrashSystem implements Serializable {
 						DbAlerts.deleteAlert(theAlert);
 						assCtAlertCtCrisis.remove(theAlert);
 						cmpSystemCtAlert.remove(theAlert.id.value.getClass());
-						if (!assCtAlertCtCrisis.contains(theCrisis))
+						if (!assCtAlertCtCrisis.contains(theCrisis)) {
+							// PostF 4
+							CtHuman theHuman = assCtAlertCtHuman.get(theAlert);
+							if (!theHuman.isAcknowledged(EtCrisisStatus.closed).getValue()) {
+								log.error("Unable to message a communication company about the crisis update");
+							}
 							break;
+						}
 					}
 				}
 	
-				// PostF 4	
+				// PostF 5	
 				PtString aMessage = new PtString("The crisis "
 						//+ "with ID '"
 						//+ aDtCrisisID.value.getValue() + "' "
 								+ "is now closed !");
 				theActCoordinator.ieMessage(aMessage);
+				
 				
 				return new PtBoolean(true);
 			}

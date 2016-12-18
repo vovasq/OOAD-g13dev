@@ -56,7 +56,7 @@ public class CoordinatorLauncher extends UI {
 				CtCoordinator thisCtCoord = (CtCoordinator) sys.getCtCoordinator(new DtCoordinatorID(new PtString(viewName)));
 				
 				if (!thisCtCoord.vpIsLogged.getValue()) {
-					log.debug("coordinatorsViewProvider: actor is logged out, so let's return CoordMobileLoginView");
+					log.debug("coordinatorsViewProvider: actor is  logged out, so let's return CoordMobileLoginView");
 					return new CoordMobileLoginView(viewName);
 				}
 				

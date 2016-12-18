@@ -45,6 +45,8 @@ public class DtDateAndTime implements Serializable {
 		
 		}
 
+		
+		
 		public PtInteger toSecondsQty(){
 			
 			//Note: java's epoch is UTC 1/1/1970 

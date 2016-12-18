@@ -170,7 +170,6 @@ public class ActCoordinator extends ActAuthenticated {
 			
 		if(res.getValue() == true)
 			log.info("operation oeCloseCrisis successfully executed by the system");
-
 		return res;
 	}
 
@@ -181,6 +180,7 @@ public class ActCoordinator extends ActAuthenticated {
 		sys.setCurrentRequestingAuthenticatedActor(this);
 	
 		log.info("message ActCoordinator.oeGetAlertsSet sent to system");
+		
 		PtBoolean res = sys.oeGetAlertsSet(aEtAlertStatus);
 		
 		if(res.getValue() == true)

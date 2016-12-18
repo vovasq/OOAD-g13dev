@@ -13,15 +13,22 @@
 package lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.environment.actors.ActComCompany;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.IcrashSystem;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.db.DbCrises;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.secondary.DtSMS;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.secondary.DtSMSHumanNotify;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtBoolean;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtString;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.utils.Log4JUtils;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtDate;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtTime;
+
+
 
 /**
  * The Class of the Human and their details
@@ -59,24 +66,23 @@ public class CtHuman implements Serializable {
 	 * alert through its own communication company.
 	 *
 	 * @return the success of the method
+	 * @param aEtCrisisStatus the type of Crisis Status
 	 * @throws RemoteException Thrown if the server is offline
 	 */
-	public PtBoolean isAcknowledged() {
-
+	public PtBoolean isAcknowledged(EtCrisisStatus aEtCrisisStatus) {
 		try {
 			IcrashSystem sys = IcrashSystem.getInstance();
-			
 			ActComCompany theComCompany = sys.getActComCompany(this);
-			
 			if(theComCompany != null){
-				DtSMS sms = new DtSMS(new PtString("The handling of your alert by our services is in progress !"));
-				return theComCompany.ieSmsSend(this.id, sms);
+				Calendar calendarChanged = Calendar.getInstance();
+				DtSMSHumanNotify sms = new DtSMSHumanNotify(new PtString("Your Crisis has been " + aEtCrisisStatus.toString() + " " 
+							+ new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(calendarChanged.getTime())));
+				return theComCompany.ieSmsHumanNotifySend(this.id, sms);
 			} else
 				throw new Exception("No com company assigned to the human " + this.id.value.getValue());
 		} catch(Exception ex){
 			log.error("Exception in CtHuman.isAcknowledged ..." + ex);
 		}
-		
 		return new PtBoolean(false);
 	}
 	

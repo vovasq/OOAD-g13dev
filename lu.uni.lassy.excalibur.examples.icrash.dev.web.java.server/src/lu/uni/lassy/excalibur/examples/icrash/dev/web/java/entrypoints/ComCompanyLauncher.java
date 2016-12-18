@@ -45,7 +45,7 @@ public class ComCompanyLauncher extends UI {
 	@Override
 	protected void init(VaadinRequest request) {
 		new Navigator(this, this);
-		
+		  
 		ViewProvider comCompaniesViewProvider = new ViewProvider() {
 			private static final long serialVersionUID = -7990230620031142257L;
 

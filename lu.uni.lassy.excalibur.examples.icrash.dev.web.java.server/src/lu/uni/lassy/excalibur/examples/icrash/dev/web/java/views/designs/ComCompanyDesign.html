@@ -1,74 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
  <head>
-  <meta charset="UTF-8" name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;PAPER_WIDTH&quot;:1800,&quot;PAPER_HEIGHT&quot;:900,&quot;PAPER_SCROLL_LEFT&quot;:1723,&quot;PAPER_SCROLL_TOP&quot;:1968,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src&quot;,&quot;THEME&quot;:&quot;icrash&quot;}">
+  <meta charset="UTF-8">
+  <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src&quot;,&quot;THEME&quot;:&quot;valo&quot;}">
+  <meta name="vaadin-version" content="7.7.0">
  </head> 
  <body> 
-  <v-vertical-layout responsive="true" size-full="true"> 
-   <v-vertical-layout responsive="true" size-full="true" _id="headerlayout" :expand=""> 
-    <v-label responsive="true" size-auto="true" _id="welcomeText" :middle="" :center=""></v-label> 
-    <v-label responsive="true" size-auto="true" _id="comCompanyNameToShow" :middle="" :center=""></v-label> 
-   </v-vertical-layout> 
-   <v-horizontal-layout spacing="true" width-full="true" margin="true" _id="externalContentLayout" :expand="6"> 
-    <v-panel caption="Alert data" responsive="true" size-auto="true" _id="bigContentPanel" :center="" :expand="50"> 
-     <v-vertical-layout spacing="true" responsive="true" size-auto="true" margin="true" _id="bigPanelLayout"> 
-      <v-vertical-layout responsive="true" height="63px" _id="typeOfPersonLayout"> 
-       <v-combo-box caption="Type of person:" responsive="true" item-caption-mode="id" _id="typeOfPerson"> 
+  <vaadin-vertical-layout responsive size-full> 
+   <vaadin-vertical-layout responsive size-full _id="headerlayout" :expand> 
+    <vaadin-label responsive size-auto _id="welcomeText" :middle :center></vaadin-label> 
+    <vaadin-label responsive size-auto _id="comCompanyNameToShow" :middle :center></vaadin-label> 
+   </vaadin-vertical-layout> 
+   <vaadin-horizontal-layout spacing width-full margin _id="externalContentLayout" :expand="6"> 
+    <vaadin-panel caption="Alert data" responsive size-auto _id="bigContentPanel" :center :expand="35"> 
+     <vaadin-vertical-layout spacing responsive size-auto margin _id="bigPanelLayout"> 
+      <vaadin-vertical-layout responsive height="63px" _id="typeOfPersonLayout"> 
+       <vaadin-combo-box caption="Type of person:" responsive item-caption-mode="id" _id="typeOfPerson"> 
         <option>witness</option> 
         <option>victim</option> 
         <option>anonym</option> 
-       </v-combo-box> 
-      </v-vertical-layout> 
-      <v-horizontal-layout spacing="true"> 
-       <v-vertical-layout spacing="true" responsive="true" _id="panelLayout" :center="" :expand="50"> 
-        <v-vertical-layout spacing="true" size-full="true" _id="dataLayout" :middle="" :center=""> 
-         <v-text-field caption="   " input-prompt="Enter a phone number" _id="phoneNr" :middle="" :center=""></v-text-field> 
-         <v-text-field input-prompt="Enter a latitude" _id="latitude" :middle="" :center=""></v-text-field> 
-         <v-text-field input-prompt="Enter a longitude" _id="longitude" :middle="" :center=""></v-text-field> 
-         <v-text-area input-prompt="Enter a comment" _id="comment" :middle="" :center=""></v-text-area> 
-        </v-vertical-layout> 
-       </v-vertical-layout> 
-       <v-vertical-layout :center="" :expand="50"> 
-        <v-vertical-layout spacing="true" _id="dateTimeLayout" :middle="" :center=""> 
-         <v-date-field caption="Date:" _id="date" :middle="" :center=""></v-date-field> 
-         <v-grid-layout spacing="true" _id="timeLayout"> 
+       </vaadin-combo-box> 
+      </vaadin-vertical-layout> 
+      <vaadin-horizontal-layout spacing> 
+       <vaadin-vertical-layout spacing responsive _id="panelLayout" :center :expand="50"> 
+        <vaadin-vertical-layout spacing size-full _id="dataLayout" :middle :center> 
+         <vaadin-text-field caption="   " input-prompt="Enter a phone number" _id="phoneNr" :middle :center></vaadin-text-field> 
+         <vaadin-text-field input-prompt="Enter a latitude" _id="latitude" :middle :center></vaadin-text-field> 
+         <vaadin-text-field input-prompt="Enter a longitude" _id="longitude" :middle :center></vaadin-text-field> 
+         <vaadin-text-area input-prompt="Enter a comment" _id="comment" :middle :center></vaadin-text-area> 
+        </vaadin-vertical-layout> 
+       </vaadin-vertical-layout> 
+       <vaadin-vertical-layout :center :expand="50"> 
+        <vaadin-vertical-layout spacing _id="dateTimeLayout" :middle :center> 
+         <vaadin-date-field caption="Date:" _id="date" :middle :center></vaadin-date-field> 
+         <vaadin-grid-layout spacing _id="timeLayout"> 
           <row> 
            <column> 
-            <v-slider caption="Hour:" width="200px" _id="hourSlider"></v-slider> 
+            <vaadin-slider caption="Hour:" width="200px" _id="hourSlider"></vaadin-slider> 
            </column> 
            <column> 
-            <v-text-field caption="   " width="40px" _id="inputHour"></v-text-field> 
+            <vaadin-text-field caption="   " width="40px" _id="inputHour"></vaadin-text-field> 
            </column> 
           </row> 
           <row> 
            <column> 
-            <v-slider caption="Minute:" width="200px" _id="minuteSlider"></v-slider> 
+            <vaadin-slider caption="Minute:" width="200px" _id="minuteSlider"></vaadin-slider> 
            </column> 
            <column> 
-            <v-text-field caption="   " width="40px" _id="inputMinute"></v-text-field> 
+            <vaadin-text-field caption="   " width="40px" _id="inputMinute"></vaadin-text-field> 
            </column> 
           </row> 
           <row> 
            <column> 
-            <v-slider caption="Second:" width="200px" _id="secondSlider"></v-slider> 
+            <vaadin-slider caption="Second:" width="200px" _id="secondSlider"></vaadin-slider> 
            </column> 
            <column> 
-            <v-text-field caption="   " width="40px" _id="inputSecond"></v-text-field> 
+            <vaadin-text-field caption="   " width="40px" _id="inputSecond"></vaadin-text-field> 
            </column> 
           </row> 
-         </v-grid-layout> 
-        </v-vertical-layout> 
-       </v-vertical-layout> 
-      </v-horizontal-layout> 
-      <v-button style-name="primary" plain-text="" _id="sendAlertBtn" :center="">
+         </vaadin-grid-layout> 
+        </vaadin-vertical-layout> 
+       </vaadin-vertical-layout> 
+      </vaadin-horizontal-layout> 
+      <vaadin-button style-name="primary" plain-text _id="sendAlertBtn" :center>
         Send alert 
-      </v-button> 
-     </v-vertical-layout> 
-    </v-panel> 
-    <v-panel caption="Communication Company messages" responsive="true" width="700px" _id="messagesPanel" :expand="50"> 
-     <v-table responsive="true" _id="comCompanyMessages"></v-table> 
-    </v-panel> 
-   </v-horizontal-layout> 
-  </v-vertical-layout>  
+      </vaadin-button> 
+     </vaadin-vertical-layout> 
+    </vaadin-panel> 
+    <vaadin-panel caption="Communication Company messages" responsive width="900px" _id="messagesPanel" :expand="65"> 
+     <vaadin-table responsive _id="comCompanyMessages"></vaadin-table> 
+    </vaadin-panel> 
+   </vaadin-horizontal-layout> 
+  </vaadin-vertical-layout>  
  </body>
 </html>

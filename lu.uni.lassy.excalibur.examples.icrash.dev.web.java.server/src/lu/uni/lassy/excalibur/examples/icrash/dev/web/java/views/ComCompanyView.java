@@ -66,8 +66,8 @@ public class ComCompanyView extends ComCompanyDesign implements View, Serializab
 		comCompanyMessages.setContainerDataSource(currentComCompany.getMessagesDataSource());
 	 // comCompanyMessages.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
 	
-		comCompanyMessages.setColumnExpandRatio("inputEvent", 20);
-		comCompanyMessages.setColumnExpandRatio("message", 80);
+		comCompanyMessages.setColumnExpandRatio("inputEvent", 25);
+		comCompanyMessages.setColumnExpandRatio("message", 75);
 		comCompanyMessages.setVisibleColumns("inputEvent", "message");
 		comCompanyMessages.setSizeFull();
 		
