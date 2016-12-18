@@ -34,6 +34,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtLongitude;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPassword;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPhoneNumber;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.EtCrisisStatus;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.EtCrisisType;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.DtDate;
@@ -361,8 +362,10 @@ public class DbCrises extends DbAbstract {
 					//coordinator's pwd
 					DtPassword aPwd = new DtPassword(new PtString(
 							res.getString("pwd")));
-
-					aCtCoordinator.init(aId1, aLogin, aPwd);
+					DtPhoneNumber aPhone = new DtPhoneNumber(new PtString(
+							res.getString("phone")));
+//					aCtCoordinator.init(aLogin, aPwd, aPhone);
+					aCtCoordinator.init(aId1, aLogin, aPwd, aPhone);
 
 					//add instances to the hash
 					assCtCrisisCtCoordinator.put(aCtCrisis, aCtCoordinator);

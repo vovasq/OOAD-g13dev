@@ -11,6 +11,7 @@
 package lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary;
 
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtBoolean;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPhoneNumber;
 
 public class CtCoordinator extends CtAuthenticated {
 
@@ -18,8 +19,8 @@ public class CtCoordinator extends CtAuthenticated {
 
 	public DtCoordinatorID id;
 	
-	public PtBoolean init(DtCoordinatorID aId,DtLogin aLogin,DtPassword aPwd){
-		super.init(aLogin, aPwd);
+	public PtBoolean init(DtCoordinatorID aId,DtLogin aLogin,DtPassword aPwd, DtPhoneNumber aPhNum){
+		super.init(aLogin, aPwd, aPhNum);
 		id = aId;
 		return new PtBoolean(true); 
 	}

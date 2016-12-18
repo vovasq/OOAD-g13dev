@@ -50,6 +50,8 @@ public class CoordMobileLoginView extends NavigationView implements View, Serial
 	TextField login = new TextField("Login");
 	PasswordField pwd = new PasswordField("Password");
 	Button loginBtn = new Button("Login");
+//	TextField phone = new TextField("Login");
+	
 	
 	public CoordMobileLoginView(String CoordID) {
 		CtCoordinator ctCoordinator = (CtCoordinator) sys.getCtCoordinator(new DtCoordinatorID(new PtString(CoordID)));

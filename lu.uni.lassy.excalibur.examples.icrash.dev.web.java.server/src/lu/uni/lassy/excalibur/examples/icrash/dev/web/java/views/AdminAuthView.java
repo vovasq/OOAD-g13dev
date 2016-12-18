@@ -33,7 +33,7 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPhoneNumber;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.entrypoints.AdministratorLauncher;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.entrypoints.misc.CoordinatorServlet;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.environment.IcrashEnvironment;
@@ -142,11 +142,15 @@ public class AdminAuthView extends VerticalLayout implements View, Serializable 
 		
 		TextField idCoordAdd = new TextField();
 		TextField loginCoord = new TextField();
-		PasswordField pwdCoord = new PasswordField();		
+		PasswordField pwdCoord = new PasswordField();
+		// text field for phone number
+		TextField phoneCoord = new TextField();
 		
 		Label idCaptionAdd = new Label("ID");
 		Label loginCaption = new Label("Login");
 		Label pwdCaption = new Label("Password");
+		// label for phone 
+		Label phoneCaption = new Label("Phone");
 		
 		idCaptionAdd.setSizeUndefined();
 		idCoordAdd.setSizeUndefined();
@@ -154,14 +158,20 @@ public class AdminAuthView extends VerticalLayout implements View, Serializable 
 		loginCaption.setSizeUndefined();
 		loginCoord.setSizeUndefined();
 		
+		// do the same for a new field
+		phoneCaption.setSizeUndefined();
+		phoneCoord.setSizeUndefined();
+		
 		pwdCaption.setSizeUndefined();
 		pwdCoord.setSizeUndefined();
+		
+		
 		
 		Button validateNewCoord = new Button("Validate");
 		validateNewCoord.setClickShortcut(KeyCode.ENTER);
 		validateNewCoord.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		
-		GridLayout addCoordinatorLayout = new GridLayout(2, 4);
+		GridLayout addCoordinatorLayout = new GridLayout(2, 5);
 		addCoordinatorLayout.setSpacing(true);
 		addCoordinatorLayout.setMargin(true);
 		addCoordinatorLayout.setSizeFull();
@@ -169,14 +179,19 @@ public class AdminAuthView extends VerticalLayout implements View, Serializable 
 		addCoordinatorLayout.addComponents(
 				idCaptionAdd, idCoordAdd,
 				loginCaption, loginCoord,
+				phoneCaption, phoneCoord, // add a new field to get the coord number
 				pwdCaption, pwdCoord);
 		
-		addCoordinatorLayout.addComponent(validateNewCoord, 1, 3);
+		addCoordinatorLayout.addComponent(validateNewCoord, 1, 4); //3
 
 		addCoordinatorLayout.setComponentAlignment(idCaptionAdd, Alignment.MIDDLE_LEFT);
 		addCoordinatorLayout.setComponentAlignment(idCoordAdd, Alignment.MIDDLE_LEFT);
 		addCoordinatorLayout.setComponentAlignment(loginCaption, Alignment.MIDDLE_LEFT);
 		addCoordinatorLayout.setComponentAlignment(loginCoord, Alignment.MIDDLE_LEFT);
+		// set our new field for phone in our layout
+		addCoordinatorLayout.setComponentAlignment(phoneCaption, Alignment.MIDDLE_LEFT);
+		addCoordinatorLayout.setComponentAlignment(phoneCoord, Alignment.MIDDLE_LEFT);
+		
 		addCoordinatorLayout.setComponentAlignment(pwdCaption, Alignment.MIDDLE_LEFT);
 		addCoordinatorLayout.setComponentAlignment(pwdCoord, Alignment.MIDDLE_LEFT);
 		
@@ -280,7 +295,9 @@ public class AdminAuthView extends VerticalLayout implements View, Serializable 
 				sys.oeAddCoordinator(
 						new DtCoordinatorID(new PtString(idCoordAdd.getValue())),
 						new DtLogin(new PtString(loginCoord.getValue())),
-						new DtPassword(new PtString(pwdCoord.getValue()))
+						new DtPassword(new PtString(pwdCoord.getValue())),
+						// add a phone number to add coordinator to create a param
+						new DtPhoneNumber(new PtString (phoneCoord.getValue()))
 						);
 					
 				// open new browser tab with the newly created coordinator console...
@@ -296,7 +313,7 @@ public class AdminAuthView extends VerticalLayout implements View, Serializable 
 			idCoordAdd.setValue("");
 			loginCoord.setValue("");
 			pwdCoord.setValue("");
-				
+			phoneCoord.setValue("");	
 			idCoordAdd.focus();
 		});
 		/************************************************* ADD COORDINATOR FORM LOGIC END *************************************************/

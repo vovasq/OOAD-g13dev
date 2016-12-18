@@ -21,6 +21,7 @@ import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtCoordinatorID;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtLogin;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPassword;
+import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.system.types.primary.DtPhoneNumber;
 import lu.uni.lassy.excalibur.examples.icrash.dev.web.java.types.stdlib.PtString;
 
 public class DbCoordinators extends DbAbstract {
@@ -46,11 +47,12 @@ public class DbCoordinators extends DbAbstract {
 				String id = aCtCoordinator.id.value.getValue();
 				String login =  aCtCoordinator.login.value.getValue();
 				String pwd =  aCtCoordinator.pwd.value.getValue();
-	
+				String phone = aCtCoordinator.phoneNumber.value.getValue();
+				
 				log.debug("[DATABASE]-Insert coordinator");
 				int val = st.executeUpdate("INSERT INTO "+ dbName+ ".coordinators" +
-											"(id,login,pwd)" + 
-											"VALUES("+"'"+id+"'"+",'"+login+"','"+pwd+"')");
+											"(id,login,pwd,phone)" + 
+											"VALUES("+"'"+id+"'"+",'"+login+"','"+pwd+"','"+phone+"')");
 				
 				log.debug(val + " row affected");
 			}
@@ -103,8 +105,8 @@ public class DbCoordinators extends DbAbstract {
 					DtLogin aLogin = new DtLogin(new PtString(res.getString("login")));
 					//coordinator's pwd
 					DtPassword aPwd = new DtPassword(new PtString(res.getString("pwd")));
-
-					aCtCoordinator.init(aId, aLogin,aPwd);
+					DtPhoneNumber aPhone = new DtPhoneNumber(new PtString(res.getString("phone")));
+					aCtCoordinator.init(aId, aLogin,aPwd, aPhone);
 					
 				}
 								
@@ -193,8 +195,10 @@ public class DbCoordinators extends DbAbstract {
 							res.getString("id")));
 					DtLogin aLogin = new DtLogin(new PtString(res.getString("login")));
 					DtPassword aPwd = new DtPassword(new PtString(res.getString("pwd")));
+					DtPhoneNumber aPhoneNumber = new DtPhoneNumber(new PtString(
+							res.getString("")));
 					//init aCtAlert instance
-					aCtCoord.init(aId, aLogin, aPwd);
+					aCtCoord.init(aId, aLogin, aPwd, aPhoneNumber);
 					
 					//add instance to the hash
 					cmpSystemCtCoord
